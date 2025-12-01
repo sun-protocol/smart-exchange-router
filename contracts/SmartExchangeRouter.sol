@@ -560,7 +560,8 @@ contract SmartExchangeRouter is ReentrancyGuard {
       for(uint256 i = 0; i < outAmounts.length; i++){
         amounts[midPath_start + i] = outAmounts[i];
       }
-      require(context.pathSlice[context.pathSlice.length - 1] == WTRX, "INVALID_PATH");
+      require(context.pathSlice[context.pathSlice.length - 2] == WTRX,
+              "INVALID_PATH");
       amounts[amounts.length - 1] = amounts[amounts.length - 2];
       unwrapWTRX(amounts[amounts.length - 1], context.recipient);
     }else{
