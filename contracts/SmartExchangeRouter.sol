@@ -526,6 +526,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     uint256 midPath_start = 0;
     address[] memory midPath;
     if (tokenIn == address(0)){
+      require(context.pathSlice[1] == WTRX, "INVALID_PATH"); 
       amounts[0] = context.amountIn;
       amounts[1] = context.amountIn;        
       IWTRX(WTRX).deposit{value: context.amountIn}();
@@ -542,6 +543,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     //_approveToken(midPath[0], v2Router);
     if(tokenOut == address(0)){
       if(context.pathSlice.length == 2){
+        require(tokenIn == WTRX, "INVALID_PATH");
         amounts[0] = context.amountIn;
         amounts[1] = context.amountIn;
         unwrapWTRX(context.amountIn, context.recipient);
@@ -558,6 +560,8 @@ contract SmartExchangeRouter is ReentrancyGuard {
       for(uint256 i = 0; i < outAmounts.length; i++){
         amounts[midPath_start + i] = outAmounts[i];
       }
+      require(context.pathSlice[context.pathSlice.length - 2] == WTRX,
+              "INVALID_PATH");
       amounts[amounts.length - 1] = amounts[amounts.length - 2];
       unwrapWTRX(amounts[amounts.length - 1], context.recipient);
     }else{
