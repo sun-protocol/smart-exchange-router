@@ -229,6 +229,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
             "INVALID_POOL_VERSION.");
     require(path.length > 0, "INVALID_PATH");
     require(path.length == fees.length, "INVALID_PATH");
+    require(data.to == msg.sender, 'INVALID_TO');
     amountsOut = new uint256[](path.length);
     if(path[0] == address(0)){
       require(msg.value >= data.amountIn, "INSUFFIENT_TRX");
