@@ -66,7 +66,6 @@ contract SmartExchangeRouter is ReentrancyGuard {
   mapping(address => mapping(address => bool)) tokenApprovedPool;
   mapping(address => bool) existPools;
   mapping(address => mapping(address => uint128)) poolToken;
-  mapping(address => address) public poolToken0;
   mapping(string => address) stablePools;
   mapping(string => bool) poolVersionUsdc;
   mapping(string => bool) poolVersionPsm;
@@ -136,10 +135,9 @@ contract SmartExchangeRouter is ReentrancyGuard {
     require(existPools[pool] == false, "pool exist");
     require(tokens.length > 1, "at least 2 tokens");
     for (uint128 i = 0; i < tokens.length; i++){
-        poolToken[pool][tokens[i]] = i;
+        poolToken[pool][tokens[i]] = i + 1;
         _approveToken(tokens[i], pool);
     }
-    poolToken0[pool] = tokens[0];
     stablePools[poolVersion] = pool;
     existPools[pool] = true;
     emit AddPool(owner, pool, tokens);
@@ -162,7 +160,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     uint256 usddDecimals = 1;
     uint256 gemDecimals = 1;
     for (uint128 i = 0; i < tokens.length; i++){
-        poolToken[pool][tokens[i]] = i;
+        poolToken[pool][tokens[i]] = i + 1;
         if (tokens[i] == psmUsdd) {
           _approveToken(tokens[i], pool);
           usddDecimals = erc20(tokens[i]).decimals();
@@ -174,7 +172,6 @@ contract SmartExchangeRouter is ReentrancyGuard {
     }
     psmRelativeDecimals[pool] = 10 ** (usddDecimals - gemDecimals);
     stablePools[poolVersion] = pool;
-    poolToken0[pool] = tokens[0];
     existPools[pool] = true;
     poolVersionPsm[poolVersion] = true;
     emit AddPool(owner, pool, tokens);
@@ -383,12 +380,10 @@ contract SmartExchangeRouter is ReentrancyGuard {
     amountsOut = new uint256[](path.length);
     amountsOut[0] = amountIn;
     for (uint256 i = 1; i < path.length; i++) {
-      uint128 tokenIdIn = poolToken[pool][path[i - 1]];
-      if(tokenIdIn == 0){
-        // for usdc pool, token0 maybe not id 0
-        require(path[i - 1] == poolToken0[pool], "INVALID_PATH_SLICE");
-      }
-      uint128 tokenIdOut = poolToken[pool][path[i]];
+      require(poolToken[pool][path[i - 1]] != 0, "INVALID_PATH_SLICE");
+      require(poolToken[pool][path[i]] != 0, "INVALID_PATH_SLICE");
+      uint128 tokenIdIn = poolToken[pool][path[i - 1]] - 1;
+      uint128 tokenIdOut = poolToken[pool][path[i]] - 1;
       require(tokenIdIn != tokenIdOut, "INVALID_PATH_SLICE");
       uint256 amountMin = i + 1 == path.length ? amountOutMin : 1;
       uint256 balanceBefore = erc20(path[i]).balanceOf(address(this));
