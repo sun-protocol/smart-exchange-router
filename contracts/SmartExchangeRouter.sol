@@ -190,7 +190,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     require(existPools[pool], "pool not exist");
     require(tokens.length > 1, "at least 2 tokens");
     for (uint128 i = 0; i< tokens.length; i++){
-      poolToken[pool][tokens[i]] = i;
+      poolToken[pool][tokens[i]] = i + 1;
       _approveToken(tokens[i], pool);
     }
     emit ChangePool(owner, pool, tokens);
