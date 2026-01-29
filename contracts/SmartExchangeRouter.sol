@@ -235,7 +235,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     require(data.to == msg.sender, 'INVALID_TO');
     amountsOut = new uint256[](path.length);
     if(path[0] == address(0)){
-      require(msg.value >= data.amountIn, "INSUFFIENT_TRX");
+      require(msg.value == data.amountIn, "INSUFFIENT_TRX");
       amountsOut[0] = data.amountIn;
     }else{
       amountsOut[0] = _tokenSafeTransferFrom(
@@ -606,7 +606,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     amounts[amounts.length - 1] = amountOut;
   }
 
-  function unwrapWTRX(uint256 amountMinimum, address recipient) public payable{
+  function unwrapWTRX(uint256 amountMinimum, address recipient) internal {
     uint256 balanceWTRX = erc20(WTRX).balanceOf(address(this));
     require(balanceWTRX >= amountMinimum, "Insufficient WTRX");
     if (balanceWTRX > 0) {
