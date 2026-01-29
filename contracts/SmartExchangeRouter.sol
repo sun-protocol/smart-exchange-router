@@ -66,6 +66,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
   mapping(address => mapping(address => bool)) tokenApprovedPool;
   mapping(address => bool) existPools;
   mapping(address => mapping(address => uint128)) poolToken;
+  mapping(address => address) public poolToken0;
   mapping(string => address) stablePools;
   mapping(string => bool) poolVersionUsdc;
   mapping(string => bool) poolVersionPsm;
@@ -138,6 +139,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
         poolToken[pool][tokens[i]] = i;
         _approveToken(tokens[i], pool);
     }
+    poolToken0[pool] = tokens[0];
     stablePools[poolVersion] = pool;
     existPools[pool] = true;
     emit AddPool(owner, pool, tokens);
@@ -172,6 +174,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     }
     psmRelativeDecimals[pool] = 10 ** (usddDecimals - gemDecimals);
     stablePools[poolVersion] = pool;
+    poolToken0[pool] = tokens[0];
     existPools[pool] = true;
     poolVersionPsm[poolVersion] = true;
     emit AddPool(owner, pool, tokens);
@@ -381,6 +384,10 @@ contract SmartExchangeRouter is ReentrancyGuard {
     amountsOut[0] = amountIn;
     for (uint256 i = 1; i < path.length; i++) {
       uint128 tokenIdIn = poolToken[pool][path[i - 1]];
+      if(tokenIdIn == 0){
+        // for usdc pool, token0 maybe not id 0
+        require(path[i - 1] == poolToken0[pool], "INVALID_PATH_SLICE");
+      }
       uint128 tokenIdOut = poolToken[pool][path[i]];
       require(tokenIdIn != tokenIdOut, "INVALID_PATH_SLICE");
       uint256 amountMin = i + 1 == path.length ? amountOutMin : 1;
