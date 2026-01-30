@@ -235,6 +235,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
       require(msg.value == data.amountIn, "INSUFFIENT_TRX");
       amountsOut[0] = data.amountIn;
     }else{
+      require(msg.value == 0, "UNEXPECTED_TRX");
       amountsOut[0] = _tokenSafeTransferFrom(
         path[0], 
         msg.sender, 
