@@ -136,3 +136,9 @@ const swapExactInput = async () => {
 };
 
 ```
+
+## 🔗 Related Resources
+- **Official Website**: [SUN.io](https://sun.io/)
+- **Blockchain Explorer**: [TRONSCAN](https://tronscan.org/)
+- **Developer Documentation**: [SUN.io Docs](https://docs.sun.io/)
+
