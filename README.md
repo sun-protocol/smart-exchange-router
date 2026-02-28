@@ -1,6 +1,19 @@
 # smart-router
 
-swap smart-router
+## Background
+Smart Router is a robust trading tool introduced by SUN.io that provides users with a top-notch trading experience by finding them the best prices. Users simply need to select the trading pair and enter the amount they want to trade, and the Smart Router will look for the optimal routing in all the trading pools(SunSwap、SunCurve and PSM) on SUN.io.
+
+The smart router plays an important role in SUN.io:
+
+* Executing trades at the best price: The Smart Router finds the best price for traders by choosing the optimal path to execute trades based on the price difference across markets. This means users get more favorable trade prices at execution to maximize returns.
+
+* Enhancing liquidity: The Smart Router utilizes the liquidity of different markets to provide better depth and liquidity for traders. By executing trades across multiple liquidity pools, it reduces slippage and market shocks, thus offering an enhanced trading experience.
+
+* Improving liquidity utilization: The Smart Router helps improve the utilization of liquidity. By channeling liquidity from highly liquid markets to less liquid ones, it helps improve the overall utilization of liquidity and enables the completion of more trades.
+
+
+## Mechanism
+Smart Router Architecture Diagram SUN.io's Smart Router algorithm service retrieves data from SunSwap V1, SunSwap V2, SunSwap V3, PSM, and SunCurve by utilizing the contract image built on the server. It sorts trade paths by the amount of the token users can obtain and displays the top three as options for users. The contract of the Smart Router is a nested contract through which the liquidity pools on SunSwap V1, SunSwap V2, SunSwap V3, PSM, and SunCurve can be called to complete trades.
 
 # Build
 
