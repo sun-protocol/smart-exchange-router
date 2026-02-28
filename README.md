@@ -1,6 +1,6 @@
 # Smart Router
 
-## Background
+## Overview
 Smart Router is a robust trading tool introduced by SUN.io that provides users with a top-notch trading experience by finding them the best prices. Users simply need to select the trading pair and enter the amount they want to trade, and the Smart Router will look for the optimal routing in all the trading pools(SunSwap、SunCurve and PSM) on SUN.io.
 
 The smart router plays an important role in SUN.io:
