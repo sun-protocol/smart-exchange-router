@@ -381,10 +381,11 @@ contract SmartExchangeRouter is ReentrancyGuard {
     amountsOut = new uint256[](path.length);
     amountsOut[0] = amountIn;
     for (uint256 i = 1; i < path.length; i++) {
-      require(poolToken[pool][path[i - 1]] != 0, "INVALID_PATH_SLICE");
-      require(poolToken[pool][path[i]] != 0, "INVALID_PATH_SLICE");
-      uint128 tokenIdIn = poolToken[pool][path[i - 1]] - 1;
-      uint128 tokenIdOut = poolToken[pool][path[i]] - 1;
+      uint128 tokenIdIn = poolToken[pool][path[i - 1]];
+      uint128 tokenIdOut = poolToken[pool][path[i]];
+      require(tokenIdIn != 0 && tokenIdOut != 0, "INVALID_PATH_SLICE");
+      tokenIdIn -= 1;
+      tokenIdOut -= 1;
       require(tokenIdIn != tokenIdOut, "INVALID_PATH_SLICE");
       uint256 amountMin = i + 1 == path.length ? amountOutMin : 1;
       uint256 balanceBefore = erc20(path[i]).balanceOf(address(this));
