@@ -135,7 +135,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     require(existPools[pool] == false, "pool exist");
     require(tokens.length > 1, "at least 2 tokens");
     for (uint128 i = 0; i < tokens.length; i++){
-        poolToken[pool][tokens[i]] = i;
+        poolToken[pool][tokens[i]] = i + 1;
         _approveToken(tokens[i], pool);
     }
     stablePools[poolVersion] = pool;
@@ -160,7 +160,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     uint256 usddDecimals = 1;
     uint256 gemDecimals = 1;
     for (uint128 i = 0; i < tokens.length; i++){
-        poolToken[pool][tokens[i]] = i;
+        poolToken[pool][tokens[i]] = i + 1;
         if (tokens[i] == psmUsdd) {
           _approveToken(tokens[i], pool);
           usddDecimals = erc20(tokens[i]).decimals();
@@ -190,7 +190,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     require(existPools[pool], "pool not exist");
     require(tokens.length > 1, "at least 2 tokens");
     for (uint128 i = 0; i< tokens.length; i++){
-      poolToken[pool][tokens[i]] = i;
+      poolToken[pool][tokens[i]] = i + 1;
       _approveToken(tokens[i], pool);
     }
     emit ChangePool(owner, pool, tokens);
@@ -232,9 +232,10 @@ contract SmartExchangeRouter is ReentrancyGuard {
     require(data.to == msg.sender, 'INVALID_TO');
     amountsOut = new uint256[](path.length);
     if(path[0] == address(0)){
-      require(msg.value >= data.amountIn, "INSUFFIENT_TRX");
+      require(msg.value == data.amountIn, "INSUFFIENT_TRX");
       amountsOut[0] = data.amountIn;
     }else{
+      require(msg.value == 0, "UNEXPECTED_TRX");
       amountsOut[0] = _tokenSafeTransferFrom(
         path[0], 
         msg.sender, 
@@ -382,6 +383,9 @@ contract SmartExchangeRouter is ReentrancyGuard {
     for (uint256 i = 1; i < path.length; i++) {
       uint128 tokenIdIn = poolToken[pool][path[i - 1]];
       uint128 tokenIdOut = poolToken[pool][path[i]];
+      require(tokenIdIn != 0 && tokenIdOut != 0, "INVALID_PATH_SLICE");
+      tokenIdIn -= 1;
+      tokenIdOut -= 1;
       require(tokenIdIn != tokenIdOut, "INVALID_PATH_SLICE");
       uint256 amountMin = i + 1 == path.length ? amountOutMin : 1;
       uint256 balanceBefore = erc20(path[i]).balanceOf(address(this));
@@ -599,7 +603,7 @@ contract SmartExchangeRouter is ReentrancyGuard {
     amounts[amounts.length - 1] = amountOut;
   }
 
-  function unwrapWTRX(uint256 amountMinimum, address recipient) public payable{
+  function unwrapWTRX(uint256 amountMinimum, address recipient) internal {
     uint256 balanceWTRX = erc20(WTRX).balanceOf(address(this));
     require(balanceWTRX >= amountMinimum, "Insufficient WTRX");
     if (balanceWTRX > 0) {
