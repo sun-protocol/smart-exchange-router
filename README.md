@@ -1,5 +1,8 @@
 # Smart Router
 
+> [!WARNING]
+> **Deprecation notice:** This project will be deprecated in favor of [SunSwap Universal Router](https://github.com/sun-protocol/sunswap-universal-router). Developers should use SunSwap Universal Router for new integrations and plan to migrate existing integrations. Please refer to the linked repository for documentation and integration instructions.
+
 ## Overview
 Smart Router is a robust trading tool introduced by SUN.io that provides users with a top-notch trading experience by finding them the best prices. Users simply need to select the trading pair and enter the amount they want to trade, and the Smart Router will look for the optimal routing in all the trading pools(SunSwap、SunCurve and PSM) on SUN.io.
 
